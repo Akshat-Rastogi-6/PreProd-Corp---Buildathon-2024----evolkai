@@ -23,6 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $user = $stmt->fetch();
 
             if ($user && password_verify($password, $user['password_hash'])) {
+                session_regenerate_id(true); // Regenerate session ID to prevent session fixation
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['name'] = $user['name']; // Store name in session
                 header("Location: dashboard.php");
