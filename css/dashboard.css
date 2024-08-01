@@ -60,6 +60,9 @@ header {
 }
 
 .sidebar button {
+    background-color: blueviolet;
+    color: #cccccc;
+    font-weight: 300;
     position: relative;
     display: block;
     width: 100%;
@@ -68,13 +71,13 @@ header {
     border: none;
     text-align: left;
     cursor: pointer;
-    border-radius: 50px;
+    border-radius: 25px;
     font-size: 16px;
     z-index: 9;
 }
 
 .sidebar button:hover {
-    background-color: #ccc;
+    background-color: rgb(116, 64, 164);
 }
 
 .content {
@@ -99,7 +102,7 @@ header {
 }
 
 main {
-    margin-right: 30px;
+    margin-right: 100px;
     margin-bottom: 30px;
     margin-left: -140px;
     backdrop-filter: blur(11px) saturate(180%);
