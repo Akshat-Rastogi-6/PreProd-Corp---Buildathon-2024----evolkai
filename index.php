@@ -1,6 +1,8 @@
 <?php
 require 'config.php'; // Include database configuration
 
+$errors = [];
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_POST['user_id'];
     $name = $_POST['name']; // New field
@@ -9,7 +11,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $confirm_password = $_POST['confirm_password'];
 
     // Validate inputs
-    $errors = [];
     if (empty($user_id) || empty($name) || empty($email) || empty($password) || empty($confirm_password)) {
         $errors[] = "All fields are required.";
     }
@@ -44,17 +45,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt = $pdo->prepare($sql);
 
         if ($stmt->execute([$user_id, $name, $email, $password_hash])) {
-            echo "Registration successful. You can now <a href='signin.php'>sign in</a>.";
+            $success_message = "Registration successful. You can now <a href='signin.php'>sign in</a>.";
         } else {
-            echo "Registration failed. Please try again.";
-        }
-    } else {
-        foreach ($errors as $error) {
-            echo "<p>$error</p>";
+            $errors[] = "Registration failed. Please try again.";
         }
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,10 +65,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <header>
         <nav>
             <div>
-                <img src="assets/evolkai.png" alt="" class="logo">
+                <img src="assets/evolkai.png" alt="Evolkai Logo" class="logo">
             </div>
             <div>
-                <button class="label" style="margin-right: 5px;">Sign In</button>
+                <img src="assets/accrate.png" alt="">
+                <a href = "signin.php"><button class="label" style="margin-right: 5px;">Sign In</button></a>
             </div>
         </nav>
     </header>
@@ -88,19 +87,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <section class="second_screen" id="second_screen">
         <div class="card">
             <div>
-                <img src="assets/signup.png" alt="signup" class="image">
+                <img src="assets/signup.png" alt="Sign Up" class="image">
             </div>
             <div class="container">
                 <form method="post" action="">
-                    <input type="text" id="user_id" name="user_id" placeholder="User Id" required>
+                    <input type="text" id="user_id" name="user_id" placeholder="User ID" required>
                     <input type="text" id="name" name="name" placeholder="Name" required> <!-- New field -->
                     <input type="email" id="email" name="email" placeholder="Email" required>
                     <input type="password" id="password" name="password" placeholder="Password" required>
-                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Current Password" required>
-                    <button type="submit">Sign Up</button>
+                    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+                    <div class="center">
+                        <button type="submit">Sign Up</button>
+                    </div>
                 </form>
                 <div class="paragraph2">
                     <p>Already have an account? <a href="signin.php">Sign In</a></p>
+                    <div class="error_message">
+                        <?php
+                        if (!empty($errors)) {
+                            foreach ($errors as $error) {
+                                echo "<p>$error</p>";
+                            }
+                        }
+                        if (!empty($success_message)) {
+                            echo "<p>$success_message</p>";
+                        }
+                        ?>
+                    </div>
                 </div>
             </div>
         </div>

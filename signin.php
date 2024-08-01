@@ -7,12 +7,14 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+$error_message = "";
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_POST['user_id'];
     $password = $_POST['password'];
 
     if (empty($user_id) || empty($password)) {
-        echo "User ID and Password are required.";
+        $error_message = "User ID and Password are required.";
     } else {
         try {
             // Prepare and execute SQL query
@@ -26,10 +28,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: dashboard.php");
                 exit();
             } else {
-                echo "Invalid User ID or Password.";
+                $error_message = "Invalid User ID or Password.";
             }
         } catch (PDOException $e) {
-            echo "Database error: " . $e->getMessage();
+            $error_message = "Database error: " . $e->getMessage();
         }
     }
 }
@@ -44,26 +46,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="css/signin.css"> <!-- Add your stylesheet -->
 </head>
 <body>
-    
+
 <header>
     <nav>
         <div>
-            <img src="assets/evolkai.png" alt="" class="logo">
-        </div>
-        <div>
-            <button class="label" style="margin-right: 5px;">Sign In</button>
+            <img src="assets/evolkai.png" alt="Logo" class="logo">
         </div>
     </nav>
 </header>
 
-    <h1>Sign In</h1>
-    <form method="post" action="">
-        <label for="user_id">User ID:</label>
-        <input type="text" id="user_id" name="user_id" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Sign In</button>
-    </form>
-    <p>Don't have an account? <a href="signup.php">Sign Up</a></p>
+<section class="second_screen" id="second_screen">
+    <div class="card">
+        <div>
+            <img src="assets/signin.png" alt="Sign In" class="image">
+        </div>
+        <div class="container">
+            <form method="post" action="">
+                <input type="text" id="user_id" name="user_id" placeholder="User ID" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
+                <div class="center">
+                    <button type="submit">Sign In</button>
+                </div>
+            </form>
+            <div class="paragraph2">
+                <p>Don't have an account? <a href="index.php">Sign Up</a></p>
+            </div>
+            <div class="error_message">
+                <?php
+                if (!empty($error_message)) {
+                    echo "<p>$error_message</p>";
+                }
+                ?>
+            </div>
+        </div>
+    </div>
+</section>
+
 </body>
 </html>

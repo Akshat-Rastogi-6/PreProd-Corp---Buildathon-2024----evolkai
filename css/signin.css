@@ -31,3 +31,136 @@ nav {
     margin: 50px;
 }
 
+
+.container button {
+    width: 200px;
+}
+
+.label {
+    font-family: ui-monospace,"Ubuntu Mono", monospace;
+    font-size: 18px;
+    padding: 1em 2.7em;
+    font-weight: 500;
+    background: #a4a6a921;
+    color: white;
+    border-radius: 0.6em;
+    cursor: pointer;
+    margin: 50px;
+}
+
+.logo {
+    width: 200px;
+}
+
+.second_screen {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+}
+
+.card {
+    display: flex;
+    width: 80vw;
+    backdrop-filter: blur(11px) saturate(180%);
+    -webkit-backdrop-filter: blur(11px) saturate(180%);
+    background-color: rgba(17, 25, 40, 0.54);
+    border-radius: 50px;
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.282);
+    border-radius: 15px;
+    width: 100vh;
+    padding: 20px;
+    margin-top: 50px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.form-container {
+    width: 100vh;
+    color: rgba(255, 255, 255, 0.196);
+}
+
+.form-container h1 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.paragraph2 {
+    padding: 15px;
+    margin-left: 1em;
+    margin-right: 1em;
+    text-align: center;
+    align-content: center;
+    color: aliceblue;
+    font-size: 15px;
+}
+
+.center {
+    padding: 15px;
+    margin-left: 1em;
+    margin-right: 1em;
+    text-align: center;
+    align-content: center;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+form input {
+    padding: 10px;
+    margin-bottom: 15px;
+    border: none;
+    border-radius: 5px;
+    height: 50px;
+    background-color: rgba(179, 175, 175, 0.242);
+}
+
+form button {
+    padding: 10px;
+    background-color: #44444436;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #5555551d;
+}
+
+form p {
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+form p a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+form p a:hover {
+    text-decoration: underline;
+}
+
+.link {
+    text-decoration: none;
+}
+
+.image {
+    height: 450px;
+    width: 500px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+

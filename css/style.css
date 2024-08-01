@@ -97,6 +97,7 @@ p {
     -webkit-backdrop-filter: blur(11px) saturate(180%);
     background-color: rgba(17, 25, 40, 0.54);
     border-radius: 50px;
+    border: 0px solid rgba(255, 255, 255, 0.505);
 }
 
 .container {
@@ -104,6 +105,7 @@ p {
     border-radius: 15px;
     width: 100vh;
     padding: 20px;
+    margin-top: 50px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
@@ -170,6 +172,16 @@ form p a:hover {
 }
 
 .image {
-    height: 600px;
+    height: 700px;
     width: 500px;
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+}
+
+.center {
+    padding: 15px;
+    margin-left: 1em;
+    margin-right: 1em;
+    text-align: center;
+    align-content: center;
 }
