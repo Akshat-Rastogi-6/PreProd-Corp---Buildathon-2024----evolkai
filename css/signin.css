@@ -1,20 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Days+One&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
-
-
 * {
     padding: 0px;
     margin: 0px;
-    color: aliceblue;
-    scroll-behavior: smooth;
+    color: white;
 }
 
 body {
-
-    background:url("../assets/sky.png");
-    background-repeat: no-repeat;
-    background-size: cover;
-
+    background: url(../assets/sky.png);
 }
 
 nav {
@@ -24,46 +15,24 @@ nav {
     justify-content: space-between;
 }
 
-p {
-    font-family: "Ubuntu Mono", monospace;
+.logo {
+    width: 200px;
 }
 
-.main {
-    height: 90vh;
-    text-align: center;
-    align-content: center;
+.label {
+    font-family: ui-monospace,"Ubuntu Mono", monospace;
+    font-size: 18px;
+    padding: 1em 2.7em;
+    font-weight: 500;
+    background: #a4a6a921;
+    color: white;
+    border-radius: 0.6em;
+    cursor: pointer;
+    margin: 50px;
 }
 
-.heading1 {
-    font-family: "Days One", sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    font-size: 150px;
-    color: aliceblue;
-}
-
-.paragraph {
-    margin-left: 10em;
-    margin-right: 10em;
-    text-align: center;
-    align-content: center;
-    color: aliceblue;
-    font-size: 25px;
-}
-
-.paragraph2 {
-    padding: 15px;
-    margin-left: 1em;
-    margin-right: 1em;
-    text-align: center;
-    align-content: center;
-    color: aliceblue;
-    font-size: 15px;
-}
 
 .container button {
-    margin-left: 5em;
-    margin-right: 5em;
     width: 200px;
 }
 
@@ -87,7 +56,7 @@ p {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 90vh;
 }
 
 .card {
@@ -97,7 +66,6 @@ p {
     -webkit-backdrop-filter: blur(11px) saturate(180%);
     background-color: rgba(17, 25, 40, 0.54);
     border-radius: 50px;
-    border: 0px solid rgba(255, 255, 255, 0.505);
 }
 
 .container {
@@ -118,6 +86,24 @@ p {
     text-align: center;
     font-size: 2rem;
     margin-bottom: 20px;
+}
+
+.paragraph2 {
+    padding: 15px;
+    margin-left: 1em;
+    margin-right: 1em;
+    text-align: center;
+    align-content: center;
+    color: aliceblue;
+    font-size: 15px;
+}
+
+.center {
+    padding: 15px;
+    margin-left: 1em;
+    margin-right: 1em;
+    text-align: center;
+    align-content: center;
 }
 
 form {
@@ -172,16 +158,9 @@ form p a:hover {
 }
 
 .image {
-    height: 700px;
+    height: 450px;
     width: 500px;
-    border-top-left-radius: 50px;
-    border-bottom-left-radius: 50px;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
 }
 
-.center {
-    padding: 15px;
-    margin-left: 1em;
-    margin-right: 1em;
-    text-align: center;
-    align-content: center;
-}
