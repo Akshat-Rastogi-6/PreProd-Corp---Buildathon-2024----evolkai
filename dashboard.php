@@ -37,24 +37,25 @@ $user_name = htmlspecialchars($_SESSION['name']);
             <button onclick="showSection('freeze-learning')">Freeze Learning</button>
         </nav>
         <main class="content">
-        <form id="upload-form" method="post" enctype="multipart/form-data">
-        <input type="file" id="file" name="file" accept=".csv, .xlsx, .xls" required>
-        <input type="submit" value="Ingest">
-    </form>
-
-    <?php
+            <div class = "inner-content">
+                <form id="upload-form" method="post" enctype="multipart/form-data">
+                    <input type="file" id="file" name="file" accept=".csv, .xlsx, .xls" required>
+                    <input type="submit" value="Ingest">
+                </form>
+                
+                <?php
     if (isset($_FILES['file'])) {
         $target_dir = "uploads/";
         $target_file = $target_dir . basename($_FILES['file']['name']);
         $uploadOk = 1;
         $fileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
+        
         // Check if file already exists
         if (file_exists($target_file)) {
             echo "Sorry, file already exists.";
             $uploadOk = 0;
         }
-
+        
         // Check file size
         if ($_FILES['file']['size'] > 50000000000) {
             echo "Sorry, your file is too large.";
@@ -79,6 +80,7 @@ $user_name = htmlspecialchars($_SESSION['name']);
         }
     }
     ?>
+        </div>
         </main>
     </div>
     <!-- <script src="js/dashboard.js"></script> -->
