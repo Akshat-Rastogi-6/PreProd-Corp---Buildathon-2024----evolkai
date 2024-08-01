@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Days+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Days+One&family=Ubuntu+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+body {
+
+    background:url("../assets/sky.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+
+}
+
+header {
+    display: flex;
+    /* background-color: white; */
+    height: 80px;
+}
+
+p {
+    font-family: "Ubuntu Mono", monospace;
+}
+
+.main {
+    height: 70vh;
+    text-align: center;
+    align-content: center;
+}
+
+.heading1 {
+    font-family: "Days One", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 150px;
+    color: aliceblue;
+}
+
+.paragraph {
+    margin-left: 10em;
+    margin-right: 10em;
+    text-align: center;
+    align-content: center;
+    color: aliceblue;
+    font-size: 25px;
+}
+
+.label {
+    font-family: ui-monospace,"Ubuntu Mono", monospace;
+    font-size: 18px;
+    padding: 1em 2.7em;
+    font-weight: 500;
+    background: #1f2937;
+    color: white;
+    border-radius: 0.6em;
+    cursor: pointer;
+    margin: 50px;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo {
+    width: 200px;
+}
+
