@@ -41,9 +41,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign In</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Add your stylesheet -->
+    <link rel="stylesheet" href="css/signin.css"> <!-- Add your stylesheet -->
 </head>
 <body>
+    
+<header>
+    <nav>
+        <div>
+            <img src="assets/evolkai.png" alt="" class="logo">
+        </div>
+        <div>
+            <button class="label" style="margin-right: 5px;">Sign In</button>
+        </div>
+    </nav>
+</header>
+
     <h1>Sign In</h1>
     <form method="post" action="">
         <label for="user_id">User ID:</label>

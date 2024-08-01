@@ -1,0 +1,33 @@
+* {
+    padding: 0px;
+    margin: 0px;
+    color: white;
+}
+
+body {
+    background: url(../assets/sky.png);
+}
+
+nav {
+    display: flex;
+    height: 80px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 200px;
+}
+
+.label {
+    font-family: ui-monospace,"Ubuntu Mono", monospace;
+    font-size: 18px;
+    padding: 1em 2.7em;
+    font-weight: 500;
+    background: #a4a6a921;
+    color: white;
+    border-radius: 0.6em;
+    cursor: pointer;
+    margin: 50px;
+}
+
