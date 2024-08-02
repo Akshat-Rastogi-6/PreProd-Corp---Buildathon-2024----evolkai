@@ -1,3 +1,4 @@
+# All the imports
 from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from matplotlib import pyplot as plt
@@ -77,7 +78,7 @@ def switch_case(argument, **kwargs):
         return None
 
 
-
+# The hyperparameters are added based on the machine learning model
 def get_hyperparameters(model_name):
     params = {}
     if model_name == "Random Forest Classifier":
@@ -137,6 +138,7 @@ def get_hyperparameters(model_name):
     elif model_name == "Stacking Classifier":
         params["final_estimator__C"] = st.sidebar.number_input("Final Estimator C", 1.0)
     return params
+
 # Generate confusion matrix
 def cm(y_test, y_pred):
     mdl_cm = confusion_matrix(y_test, y_pred)
@@ -215,19 +217,39 @@ def run_model(df, model, model_name):
             testing_file = st.sidebar.file_uploader("Upload your testing file...", type=['csv', 'xls', 'xlsx'])
 
 
-            if testing_file is not None:
-                # Check the file extension to determine how to read it
-                file_extension = testing_file.name.split('.')[-1]
+            # if testing_file is not None:
+            #     # Check the file extension to determine how to read it
+            #     file_extension = testing_file.name.split('.')[-1]
 
-                if file_extension == 'csv':
+            #     if file_extension == 'csv':
+            #         test = pd.read_csv(testing_file)
+            #     elif file_extension == 'xls' or file_extension == 'xlsx':
+            #         test = pd.read_excel(testing_file)
+            #     else:
+            #         st.error("Unsupported file type.")
+            #         test = None
+
+            # y_pred = model.predict(X_test)
+
+            if testing_file is not None:
+                file_extension = testing_file.name.split('.')[-1]
+                if(file_extension == 'csv'):
                     test = pd.read_csv(testing_file)
-                elif file_extension == 'xls' or file_extension == 'xlsx':
+
+                elif(file_extension == 'xls' or file_extension == 'xlsx'):
                     test = pd.read_excel(testing_file)
+
                 else:
                     st.error("Unsupported file type.")
                     test = None
 
-            y_pred = model.predict(X_test)
+                test_columns = test.columns
+                test = pre_processing(test, test_columns)
+                test = pd.DataFrame(df, columns=test_columns)
+                y_pred = model.predict(test)
+                
+            else:    
+                y_pred = model.predict(X_test)
             
             eval_mat = st.sidebar.selectbox("Select your Evaluation Matrix :", ["Accuracy", "Precision", "Recall(Sensitivity)", "F1 Score", "Roc AUC Score", "RMSE"])
 
