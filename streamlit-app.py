@@ -22,7 +22,7 @@ from sklearn.metrics import accuracy_score, auc, cohen_kappa_score, confusion_ma
 from xgboost import XGBClassifier
 
 # --server.enableXsrfProtection false
-
+# streamlit run app.py --server.enableXsrfProtection false
 # This function helps you to choose between various different machine learning models.
 def switch_case(argument):
     switcher = {
