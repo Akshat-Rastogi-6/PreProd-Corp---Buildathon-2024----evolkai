@@ -7,19 +7,31 @@ def main():
     background_image_url = "https://i.pinimg.com/564x/11/83/7c/11837c0ee094b5e12f33fef3d41a1efa.jpg"
 
     st.markdown(f"""
-        <style>
-        .main {{
-            background-image: url({background_image_url});
-            background-size: cover;
-            background-position: center;
-            color: white;
-        }}
-        .sidebar {{
-            background-color: #1E1E1E;
-            color: white;
-        }}
-        </style>
-    """, unsafe_allow_html=True)
+            <style>
+            .main {{
+                background-image: url({background_image_url});
+                background-size: cover;
+                background-position: center;
+                color: white;
+            }}
+            .st-emotion-cache-1avcm0n {{
+                display: flex;
+                height: 80px;
+                align-items: center;
+                justify-content: space-between;
+            }}
+
+            .st-emotion-cache-1avcm0n {{
+                background-color: rgb(14 17 23 / 0%);
+            }}
+
+            .st-emotion-cache-1cypcdb {{
+                background-color: rgb(14 17 23 / 0%);
+            }}
+
+            </style>
+            """, unsafe_allow_html=True)
+    
 
     st.title("Accurate 🎯")
     upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
