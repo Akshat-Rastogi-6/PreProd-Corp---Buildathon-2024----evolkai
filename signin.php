@@ -26,7 +26,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 session_regenerate_id(true); // Regenerate session ID to prevent session fixation
                 $_SESSION['user_id'] = $user_id;
                 $_SESSION['name'] = $user['name']; // Store name in session
-                header("Location: http://localhost:8501/?user=" . urlencode($user['name']));
+                header("Location: http://localhost:8503/?user=" . urlencode($user['name']));
                 exit();
             } else {
                 $error_message = "Invalid User ID or Password.";

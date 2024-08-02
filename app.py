@@ -2,36 +2,41 @@ from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from matplotlib import pyplot as plt
 import seaborn as sns
+import joblib
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import streamlit as st
+import pandas as pd
+import numpy as np
+from reportlab.lib.units import inch
 from sklearn.calibration import LabelEncoder, label_binarize
-from sklearn.decomposition import PCA
-from sklearn.discriminant_analysis import LinearDiscriminantAnalysis, QuadraticDiscriminantAnalysis
-from sklearn.ensemble import AdaBoostClassifier, BaggingClassifier, GradientBoostingClassifier, IsolationForest, RandomForestClassifier
+from sklearn.ensemble import (AdaBoostClassifier, BaggingClassifier, 
+                              GradientBoostingClassifier,
+                              RandomForestClassifier, StackingClassifier)
 from sklearn.impute import SimpleImputer
-from sklearn.linear_model import ElasticNet, Lasso, LogisticRegression, PassiveAggressiveClassifier, Perceptron, RidgeClassifier, SGDClassifier
+from sklearn.linear_model import (LogisticRegression, 
+                                   PassiveAggressiveClassifier)
 from sklearn.model_selection import train_test_split
 from sklearn.multiclass import OneVsRestClassifier
-from sklearn.naive_bayes import BernoulliNB, GaussianNB, MultinomialNB
+from sklearn.naive_bayes import (BernoulliNB, GaussianNB, MultinomialNB)
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier, ExtraTreeClassifier
-import streamlit as st
-import pandas as pd
-import numpy as np
-from sklearn.metrics import accuracy_score, auc, cohen_kappa_score, confusion_matrix, f1_score, log_loss, matthews_corrcoef, precision_recall_curve, precision_score, recall_score, roc_auc_score, roc_curve
+from sklearn.metrics import (accuracy_score, auc, confusion_matrix, 
+                             f1_score, precision_score, recall_score, 
+                             roc_auc_score, roc_curve, mean_squared_error)
 from xgboost import XGBClassifier
 
-# --server.enableXsrfProtection false
-# streamlit run app.py --server.enableXsrfProtection false
-# This function helps you to choose between various different machine learning models.
+# Function to choose between different models
 def switch_case(argument):
     switcher = {
         "Random Forest Classifier": RandomForestClassifier(),
         "SVM": SVC(),
         "Decision Tree Classifier": DecisionTreeClassifier(),
         "Logistic Regression": LogisticRegression(),
-        "Adaboost Classifier" : AdaBoostClassifier(),
-        "Extra Trees Classifier" :ExtraTreeClassifier(),
+        "Adaboost Classifier": AdaBoostClassifier(),
+        "Extra Trees Classifier": ExtraTreeClassifier(),
         "Gradient Boosting Classifier": GradientBoostingClassifier(),
         "K-Nearest Neighbors Classifier": KNeighborsClassifier(),
         "Gaussian Naive Bayes Classifier": GaussianNB(),
@@ -42,19 +47,51 @@ def switch_case(argument):
         "XGBoost Classifier": XGBClassifier(),
         "LightGBM Classifier": LGBMClassifier(),
         "CatBoost Classifier": CatBoostClassifier(),
-        "MLP Classifier": MLPClassifier()
+        "MLP Classifier": MLPClassifier(),
+        "Stacking Classifier": StackingClassifier(
+            estimators=[
+                ('rf', RandomForestClassifier()),
+                ('svc', SVC(probability=True)),
+                ('gb', GradientBoostingClassifier())
+            ],
+            final_estimator=LogisticRegression()
+        )
     }
     return switcher.get(argument)
 
-# This function helps you generate a confusion matrix for your selected model
+# Generate confusion matrix
 def cm(y_test, y_pred):
-    mdl_cm=confusion_matrix(y_test, y_pred)
-    plt.figure(figsize = (13,12))
+    mdl_cm = confusion_matrix(y_test, y_pred)
+    plt.figure(figsize=(13, 12))
     sns.heatmap(mdl_cm, annot=True)
     plt.savefig('uploads/confusion_matrix.jpg', format="jpg", dpi=300)
-    st.image("uploads/confusion_matrix.jpg", caption="Confusion Matrix of your Data", width=600)\
+    st.image("uploads/confusion_matrix.jpg", caption="Confusion Matrix of your Data", width=600)
+    return 'uploads/confusion_matrix.jpg'
+
+# Generate PDF report
+def generate_pdf(model_name, eval_mat, target_column, split_size, accuracy, confusion_matrix_image_path):
+    pdf_path = "uploads/model_report.pdf"
+    c = canvas.Canvas(pdf_path, pagesize=letter)
+    width, height = letter
+
+    # Title
+    c.drawString(1 * inch, height - 1 * inch, "Model Evaluation Report")
     
-# All the pre-processing like removing null values, label encoding is done here
+    # Model Information
+    c.drawString(1 * inch, height - 1.5 * inch, f"Model Selected: {model_name}")
+    c.drawString(1 * inch, height - 2 * inch, f"Evaluation Metric: {eval_mat}")
+    c.drawString(1 * inch, height - 2.5 * inch, f"Target Column: {target_column}")
+    c.drawString(1 * inch, height - 3 * inch, f"Test Split Size: {split_size}")
+    c.drawString(1 * inch, height - 3.5 * inch, f"Model Accuracy: {accuracy:.4f}")
+
+    # Confusion Matrix
+    c.drawString(1 * inch, height - 4 * inch, "Confusion Matrix:")
+    c.drawImage(confusion_matrix_image_path, 1 * inch, height - 8 * inch, width=6 * inch, height=4 * inch)
+
+    c.save()
+    return pdf_path
+
+# Pre-process data
 def pre_processing(df, columns):
     encoder = LabelEncoder()
     # Iterate through each column in the dataframe
@@ -67,32 +104,35 @@ def pre_processing(df, columns):
     imputer = SimpleImputer(strategy='mean')
     df = imputer.fit_transform(df)
 
-    # WILL DO THIS LATER 
     return df
     
-# This function does the data splitting and applies ML
+# Run model and evaluation
 def run_model(df, model, model_name):
     st.subheader(model_name)
     
     target_column = st.text_input("Enter your target column : ")
 
     # Prepare data
-    if target_column != "" :
-        X = df.drop(columns=[target_column]) # replace 'target_column' with the name of your target column
-        y = df[target_column] # replace 'target_column' with the name of your target column
+    if target_column != "":
+        X = df.drop(columns=[target_column])
+        y = df[target_column]
         testing_size = st.text_input("Enter the test splitting size : ")
         if testing_size != "":
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=float(testing_size), random_state=42)
 
-            # Train mode
+            # Train model
             model.fit(X_train, y_train)
 
-            # feature_importances = pd.DataFrame({'Feature': X.columns, 'Importance': model.feature_importances_})
-            # feature_importances = feature_importances.sort_values(by='Importance', ascending=False)
-            # st.write(feature_importances)
+            # Save the trained model
+            model_filename = 'trained_model.pkl'
+            joblib.dump(model, model_filename)
+            st.write(f"Model saved as {model_filename}")
+
+            # Provide a download link
+            with open(model_filename, "rb") as file:
+                st.download_button(label="Download Model", data=file, file_name=model_filename)
 
             # Make predictions
-            
             testing_file = st.sidebar.file_uploader("Upload your testing CSV file...", type=['csv'])
 
             if testing_file is not None:
@@ -100,16 +140,16 @@ def run_model(df, model, model_name):
                 test_columns = test.columns
 
                 test = pre_processing(test, test_columns)
-                test = pd.DataFrame(df, columns=test_columns)
+                test = pd.DataFrame(test, columns=test_columns)
 
                 y_pred = model.predict(test)
 
-            y_pred = model.predict(X_test) #this line tests your data for code from the dataset.
+            y_pred = model.predict(X_test)
             
-            eval_mat = st.sidebar.selectbox("Select your Evaluation Matrix :", ["Accuracy", "Precision", "Recall(Sensitivity)", "F1 Score", "Roc AUC Score", "Cohen's Kappa", "Matthew's Correlation Coefficient", "Log Loss"])
+            eval_mat = st.sidebar.selectbox("Select your Evaluation Matrix :", ["Accuracy", "Precision", "Recall(Sensitivity)", "F1 Score", "Roc AUC Score", "RMSE"])
 
-            if eval_mat == "Accuracy" :
-                # Display accuracy
+            result = ""
+            if eval_mat == "Accuracy":
                 result = str(accuracy_score(y_test, y_pred))
                 st.write("Accuracy :", float(result))
 
@@ -119,7 +159,7 @@ def run_model(df, model, model_name):
 
             if eval_mat == "Recall(Sensitivity)":
                 result = str(recall_score(y_test, y_pred, average='weighted'))
-                st.write("Recall(Sensitivity)c:", float(result))
+                st.write("Recall(Sensitivity):", float(result))
 
             if eval_mat == "F1 Score":
                 result = str(f1_score(y_test, y_pred, average='weighted'))
@@ -129,39 +169,29 @@ def run_model(df, model, model_name):
                 result = str(roc_auc_score(y_test, y_pred))
                 st.write("Roc AUC Score :", float(result))
                 
-            # if eval_mat == "Confusion Matrix":
-            #     result = str(confusion_matrix(y_test, y_pred))
-            #     st.write("Confusion Matrix :", float(result))
+            if eval_mat == "RMSE":
+                result = str(mean_squared_error(y_test, y_pred))
+                st.write("RMSE:", float(result))
 
-            if eval_mat == "Cohen's Kappa":
-                result = str(cohen_kappa_score(y_test, y_pred))
-                st.write("Cohen's Kappa :", float(result))
-
-            if eval_mat == "Matthew's Correlation Coefficient":
-                result = str(matthews_corrcoef(y_test, y_pred))
-                st.write("Matthew's Correlation Coefficient :", float(result))
-
-            if eval_mat == "Log Loss":
-                result = str(log_loss(y_test, y_pred))
-                st.write("Log Loss :", float(result))
-
-            if result != "" :
+            if result != "":
                 curves = st.sidebar.selectbox("Select the metrics you want to see : ", ["Confusion Matrix", "ROC Curve"])
                 if curves == "Confusion Matrix":
-                    cm(y_test, y_pred)
-                if curves == "ROC Curve" :
+                    confusion_matrix_image_path = cm(y_test, y_pred)
+                if curves == "ROC Curve":
                     y_arr = np.array(y)
                     unique_classes, counts = np.unique(y_arr, return_counts=True)
                     n_classes = len(unique_classes)
                     y_train_bin = label_binarize(y_train, classes=range(n_classes))
-                    # Train the classifier
-                    classifier = OneVsRestClassifier(model)  # Your chosen classifier
+                    classifier = OneVsRestClassifier(model)
                     classifier.fit(X_train, y_train_bin)
 
-                    # Get predicted probabilities
                     y_score = classifier.predict_proba(X_test)
                     aoc(y_score, n_classes, y_test)
 
+            if eval_mat == "Accuracy" and curves == "Confusion Matrix":
+                pdf_path = generate_pdf(model_name, eval_mat, target_column, testing_size, float(result), confusion_matrix_image_path)
+                with open(pdf_path, "rb") as pdf_file:
+                    st.download_button(label="Download PDF Report", data=pdf_file, file_name="model_report.pdf")
 
 def aoc(y_score, n_classes, y_test):   
     y_test_np = y_test.to_numpy() 
@@ -189,20 +219,9 @@ def aoc(y_score, n_classes, y_test):
     plt.savefig('uploads/roc.jpg', format="jpg", dpi=300)
     st.image("uploads/roc.jpg", caption="ROC of your Data", width=600)
 
-# def visualization():
-#     precision, recall, _ = precision_recall_curve(y_true, y_score)
-#     plt.plot(recall, precision, marker='.')
-#     plt.xlabel('Recall')
-#     plt.ylabel('Precision')
-#     plt.title('Precision-Recall Curve')
-#     plt.show()
-
-
-
-# This is the main function
+# Main function
 def main():
 
-    st.set_page_config(page_title="New Theme App", layout="wide")
     background_image_url = "https://i.pinimg.com/564x/11/83/7c/11837c0ee094b5e12f33fef3d41a1efa.jpg"
 
     st.markdown(f"""
@@ -219,31 +238,27 @@ def main():
             }}
             </style>
             """, unsafe_allow_html=True)
-
+    
     st.title("Accurate 🎯")
-    upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
-    # Check if a file has been uploaded
-    if upload_file is not None:
-        # Read the CSV file into a DataFrame
-        df = pd.read_csv(upload_file)
-        # Display the DataFrame
-        st.write('**DataFrame from Uploaded CSV File:**')
-        st.dataframe(df.head())
-        # visualization()
+    query_params = st.query_params
+    user_name = query_params.get("user", ["Guest"])
 
+    st.write(f"Welcome, {user_name}!")
+
+    upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
+    if upload_file is not None:
+        df = pd.read_csv(upload_file)
+        st.write('*DataFrame from Uploaded CSV File:*')
+        st.dataframe(df.head())
+        
         columns = df.columns
         df = pre_processing(df, columns)
 
         df = pd.DataFrame(df, columns=columns)
 
-        model_name = st.sidebar.selectbox("Select Machine Learning Model :", ["Random Forest Classifier","SVM","Decision Tree Classifier","Logistic Regression", "Adaboost Classifier","Extra Trees Classifier","Gradient Boosting Classifier","K-Nearest Neighbors Classifier", "Gaussian Naive Bayes Classifier", "Bernoulli Naive Bayes Classifier", "Multinomial Naive Bayes Classifier", "Passive Aggressive Classifier", "Ridge Classifier", "Lasso Classifier", "ElasticNet Classifier", "Bagging Classifier", "Stochastic Gradient Descent Classifier", "Perceptron", "Isolation Forest", "Principal Component Analysis (PCA)", "Linear Discriminant Analysis (LDA)", "Quadratic Discriminant Analysis (QDA)", "XGBoost Classifier", "LightGBM Classifier", "CatBoost Classifier", "MLP Classifier"])
+        model_name = st.sidebar.selectbox("Select Machine Learning Model :", ["Random Forest Classifier","SVM","Decision Tree Classifier","Logistic Regression", "Adaboost Classifier","Extra Trees Classifier","Gradient Boosting Classifier","K-Nearest Neighbors Classifier", "Gaussian Naive Bayes Classifier", "Bernoulli Naive Bayes Classifier", "Multinomial Naive Bayes Classifier", "Passive Aggressive Classifier", "Ridge Classifier", "Lasso Classifier", "ElasticNet Classifier", "Bagging Classifier", "Stochastic Gradient Descent Classifier", "Perceptron", "Isolation Forest", "Principal Component Analysis (PCA)", "Linear Discriminant Analysis (LDA)", "Quadratic Discriminant Analysis (QDA)", "XGBoost Classifier", "LightGBM Classifier", "CatBoost Classifier", "MLP Classifier", "Stacking Classifier"])
 
         model = switch_case(model_name)
         run_model(df, model, model_name)
 
-        # st.sidebar.button("Print out Dataset Details.") 
-
 main()
-
-
-

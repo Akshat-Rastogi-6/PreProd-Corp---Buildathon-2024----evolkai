@@ -8,5 +8,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "streamlit-app.py", "--server.enableXsrfProtection", "false"]
+CMD ["streamlit", "run", "app.py", "--server.enableXsrfProtection", "false"]
 
