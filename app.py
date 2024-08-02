@@ -178,6 +178,7 @@ def pre_processing(df, columns):
         if df[column].dtype == 'object':
             # Fit label encoder and transform the column
             df[column] = encoder.fit_transform(df[column])
+            
 
     imputer = SimpleImputer(strategy='mean')
     df = imputer.fit_transform(df)
