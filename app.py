@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from PIL import Image
 from model_utils import switch_case, cm, pre_processing, run_model
 
 def main():
@@ -32,6 +33,7 @@ def main():
             </style>
             """, unsafe_allow_html=True)
     
+   
 
     st.title("Accurate 🎯")
     upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
