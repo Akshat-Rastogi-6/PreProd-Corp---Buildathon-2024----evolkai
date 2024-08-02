@@ -2,7 +2,7 @@ from catboost import CatBoostClassifier
 from lightgbm import LGBMClassifier
 from matplotlib import pyplot as plt
 import seaborn as sns
-import joblib  # Import joblib for saving the model
+import joblib
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 import streamlit as st
@@ -29,10 +29,9 @@ from sklearn.tree import DecisionTreeClassifier, ExtraTreeClassifier
 from sklearn.metrics import (accuracy_score, auc, confusion_matrix, 
                              f1_score, precision_score, recall_score, 
                              roc_auc_score, roc_curve, mean_squared_error)
-
 from xgboost import XGBClassifier
 
-# This function helps you to choose between various different machine learning models.
+# Function to choose between different models
 def switch_case(argument):
     switcher = {
         "Random Forest Classifier": RandomForestClassifier(),
@@ -63,7 +62,7 @@ def switch_case(argument):
     }
     return switcher.get(argument)
 
-# This function helps you generate a confusion matrix for your selected model
+# Generate confusion matrix
 def cm(y_test, y_pred):
     mdl_cm = confusion_matrix(y_test, y_pred)
     plt.figure(figsize=(13, 12))
@@ -72,6 +71,7 @@ def cm(y_test, y_pred):
     st.image("uploads/confusion_matrix.jpg", caption="Confusion Matrix of your Data", width=600)
     return 'uploads/confusion_matrix.jpg'
 
+# Generate PDF report
 def generate_pdf(model_name, eval_mat, target_column, split_size, accuracy, confusion_matrix_image_path):
     pdf_path = "uploads/model_report.pdf"
     c = canvas.Canvas(pdf_path, pagesize=letter)
@@ -94,8 +94,7 @@ def generate_pdf(model_name, eval_mat, target_column, split_size, accuracy, conf
     c.save()
     return pdf_path
 
-
-# All the pre-processing like removing null values, label encoding is done here
+# Pre-process data
 def pre_processing(df, columns):
     encoder = LabelEncoder()
     # Iterate through each column in the dataframe
@@ -110,7 +109,7 @@ def pre_processing(df, columns):
 
     return df
     
-# This function does the data splitting and applies ML
+# Run model and evaluation
 def run_model(df, model, model_name):
     st.subheader(model_name)
     
@@ -197,7 +196,6 @@ def run_model(df, model, model_name):
                 with open(pdf_path, "rb") as pdf_file:
                     st.download_button(label="Download PDF Report", data=pdf_file, file_name="model_report.pdf")
 
-
 def aoc(y_score, n_classes, y_test):   
     y_test_np = y_test.to_numpy() 
     fpr = dict()
@@ -224,15 +222,17 @@ def aoc(y_score, n_classes, y_test):
     plt.savefig('uploads/roc.jpg', format="jpg", dpi=300)
     st.image("uploads/roc.jpg", caption="ROC of your Data", width=600)
 
-# This is the main function
+# Main function
 def main():
     st.title("Accurate 🎯")
+    query_params = st.query_params
+    user_name = query_params.get("user", ["Guest"])
+
+    st.write(f"Welcome, {user_name}!")
+
     upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
-    # Check if a file has been uploaded
     if upload_file is not None:
-        # Read the CSV file into a DataFrame
         df = pd.read_csv(upload_file)
-        # Display the DataFrame
         st.write('**DataFrame from Uploaded CSV File:**')
         st.dataframe(df.head())
         
@@ -246,4 +246,5 @@ def main():
         model = switch_case(model_name)
         run_model(df, model, model_name)
 
-main()
+if __name__ == "__main__":
+    main()
