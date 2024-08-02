@@ -29,36 +29,114 @@ from sklearn.metrics import (accuracy_score, auc, confusion_matrix,
 from xgboost import XGBClassifier
 
 # Function to choose between different models
-def switch_case(argument):
-    switcher = {
-        "Random Forest Classifier": RandomForestClassifier(),
-        "SVM": SVC(),
-        "Decision Tree Classifier": DecisionTreeClassifier(),
-        "Logistic Regression": LogisticRegression(),
-        "Adaboost Classifier": AdaBoostClassifier(),
-        "Extra Trees Classifier": ExtraTreeClassifier(),
-        "Gradient Boosting Classifier": GradientBoostingClassifier(),
-        "K-Nearest Neighbors Classifier": KNeighborsClassifier(),
-        "Gaussian Naive Bayes Classifier": GaussianNB(),
-        "Bernoulli Naive Bayes Classifier": BernoulliNB(),
-        "Multinomial Naive Bayes Classifier": MultinomialNB(),
-        "Passive Aggressive Classifier": PassiveAggressiveClassifier(),
-        "Bagging Classifier": BaggingClassifier(),
-        "XGBoost Classifier": XGBClassifier(),
-        "LightGBM Classifier": LGBMClassifier(),
-        "CatBoost Classifier": CatBoostClassifier(),
-        "MLP Classifier": MLPClassifier(),
-        "Stacking Classifier": StackingClassifier(
+def switch_case(argument, **kwargs):
+    if argument == "Random Forest Classifier":
+        return RandomForestClassifier(**kwargs)
+    elif argument == "SVM":
+        return SVC(**kwargs)
+    elif argument == "Decision Tree Classifier":
+        return DecisionTreeClassifier(**kwargs)
+    elif argument == "Logistic Regression":
+        return LogisticRegression(**kwargs)
+    elif argument == "Adaboost Classifier":
+        return AdaBoostClassifier(**kwargs)
+    elif argument == "Extra Trees Classifier":
+        return ExtraTreeClassifier(**kwargs)
+    elif argument == "Gradient Boosting Classifier":
+        return GradientBoostingClassifier(**kwargs)
+    elif argument == "K-Nearest Neighbors Classifier":
+        return KNeighborsClassifier(**kwargs)
+    elif argument == "Gaussian Naive Bayes Classifier":
+        return GaussianNB(**kwargs)
+    elif argument == "Bernoulli Naive Bayes Classifier":
+        return BernoulliNB(**kwargs)
+    elif argument == "Multinomial Naive Bayes Classifier":
+        return MultinomialNB(**kwargs)
+    elif argument == "Passive Aggressive Classifier":
+        return PassiveAggressiveClassifier(**kwargs)
+    elif argument == "Bagging Classifier":
+        return BaggingClassifier(**kwargs)
+    elif argument == "XGBoost Classifier":
+        return XGBClassifier(**kwargs)
+    elif argument == "LightGBM Classifier":
+        return LGBMClassifier(**kwargs)
+    elif argument == "CatBoost Classifier":
+        return CatBoostClassifier(**kwargs)
+    elif argument == "MLP Classifier":
+        return MLPClassifier(**kwargs)
+    elif argument == "Stacking Classifier":
+        return StackingClassifier(
             estimators=[
                 ('rf', RandomForestClassifier()),
                 ('svc', SVC(probability=True)),
                 ('gb', GradientBoostingClassifier())
             ],
-            final_estimator=LogisticRegression()
+            final_estimator=LogisticRegression(**kwargs)
         )
-    }
-    return switcher.get(argument)
+    else:
+        return None
 
+
+
+def get_hyperparameters(model_name):
+    params = {}
+    if model_name == "Random Forest Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 100)
+        params["max_depth"] = st.sidebar.number_input("Max Depth", 10)
+    elif model_name == "SVM":
+        params["C"] = st.sidebar.number_input("C", 1.0)
+        params["kernel"] = st.sidebar.selectbox("Kernel", ["linear", "poly", "rbf", "sigmoid"])
+    elif model_name == "Decision Tree Classifier":
+        params["max_depth"] = st.sidebar.number_input("Max Depth", 10)
+        params["min_samples_split"] = st.sidebar.number_input("Min Samples Split", 2)
+    elif model_name == "Logistic Regression":
+        params["C"] = st.sidebar.number_input("C", 1.0)
+        params["solver"] = st.sidebar.selectbox("Solver", ["lbfgs", "liblinear", "sag", "saga"])
+    elif model_name == "Adaboost Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 50)
+        params["learning_rate"] = st.sidebar.number_input("Learning Rate", 1.0)
+    elif model_name == "Extra Trees Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 100)
+        params["max_depth"] = st.sidebar.number_input("Max Depth", 10)
+    elif model_name == "Gradient Boosting Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 100)
+        params["learning_rate"] = st.sidebar.number_input("Learning Rate", 0.1)
+        params["max_depth"] = st.sidebar.number_input("Max Depth", 3)
+    elif model_name == "K-Nearest Neighbors Classifier":
+        params["n_neighbors"] = st.sidebar.number_input("Number of Neighbors", 5)
+        params["algorithm"] = st.sidebar.selectbox("Algorithm", ["auto", "ball_tree", "kd_tree", "brute"])
+    elif model_name == "Gaussian Naive Bayes Classifier":
+        params["var_smoothing"] = st.sidebar.number_input("Var Smoothing", 1e-9)
+    elif model_name == "Bernoulli Naive Bayes Classifier":
+        params["alpha"] = st.sidebar.number_input("Alpha", 1.0)
+        params["binarize"] = st.sidebar.number_input("Binarize", 0.0)
+    elif model_name == "Multinomial Naive Bayes Classifier":
+        params["alpha"] = st.sidebar.number_input("Alpha", 1.0)
+    elif model_name == "Passive Aggressive Classifier":
+        params["C"] = st.sidebar.number_input("C", 1.0)
+        params["loss"] = st.sidebar.selectbox("Loss", ["hinge", "squared_hinge"])
+    elif model_name == "Bagging Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 10)
+        params["max_samples"] = st.sidebar.number_input("Max Samples", 1.0)
+    elif model_name == "XGBoost Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 100)
+        params["learning_rate"] = st.sidebar.number_input("Learning Rate", 0.1)
+        params["max_depth"] = st.sidebar.number_input("Max Depth", 3)
+    elif model_name == "LightGBM Classifier":
+        params["n_estimators"] = st.sidebar.number_input("Number of Estimators", 100)
+        params["learning_rate"] = st.sidebar.number_input("Learning Rate", 0.1)
+        params["num_leaves"] = st.sidebar.number_input("Number of Leaves", 31)
+    elif model_name == "CatBoost Classifier":
+        params["iterations"] = st.sidebar.number_input("Iterations", 1000)
+        params["learning_rate"] = st.sidebar.number_input("Learning Rate", 0.03)
+        params["depth"] = st.sidebar.number_input("Depth", 6)
+    elif model_name == "MLP Classifier":
+        params["hidden_layer_sizes"] = st.sidebar.text_input("Hidden Layer Sizes (comma separated)", "100")
+        params["activation"] = st.sidebar.selectbox("Activation", ["identity", "logistic", "tanh", "relu"])
+        params["solver"] = st.sidebar.selectbox("Solver", ["lbfgs", "sgd", "adam"])
+    elif model_name == "Stacking Classifier":
+        params["final_estimator__C"] = st.sidebar.number_input("Final Estimator C", 1.0)
+    return params
 # Generate confusion matrix
 def cm(y_test, y_pred):
     mdl_cm = confusion_matrix(y_test, y_pred)
@@ -133,16 +211,20 @@ def run_model(df, model, model_name):
                 st.download_button(label="Download Model", data=file, file_name=model_filename)
 
             # Make predictions
-            testing_file = st.sidebar.file_uploader("Upload your testing CSV file...", type=['csv'])
+            testing_file = st.sidebar.file_uploader("Upload your testing file...", type=['csv', 'xls', 'xlsx'])
+
 
             if testing_file is not None:
-                test = pd.read_csv(testing_file)
-                test_columns = test.columns
+                # Check the file extension to determine how to read it
+                file_extension = testing_file.name.split('.')[-1]
 
-                test = pre_processing(test, test_columns)
-                test = pd.DataFrame(test, columns=test_columns)
-
-                y_pred = model.predict(test)
+                if file_extension == 'csv':
+                    test = pd.read_csv(testing_file)
+                elif file_extension == 'xls' or file_extension == 'xlsx':
+                    test = pd.read_excel(testing_file)
+                else:
+                    st.error("Unsupported file type.")
+                    test = None
 
             y_pred = model.predict(X_test)
             
@@ -236,6 +318,10 @@ def main():
                 background-color: #1E1E1E;
                 color: white;
             }}
+
+            .st-emotion-cache-1avcm0n {{
+                background-color: rgb(58 85 138 / 0%);
+            }}
             </style>
             """, unsafe_allow_html=True)
     
@@ -244,6 +330,11 @@ def main():
     user_name = query_params.get("user", ["Guest"])
 
     st.write(f"Welcome, {user_name}!")
+    # Logout Button
+    if st.button("Log Out"):
+        st.write("You are now logged out. Redirecting...")
+        st.markdown('<meta http-equiv="refresh" content="0;url=logout.php" />', unsafe_allow_html=True)
+
 
     upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
     if upload_file is not None:
@@ -256,9 +347,12 @@ def main():
 
         df = pd.DataFrame(df, columns=columns)
 
-        model_name = st.sidebar.selectbox("Select Machine Learning Model :", ["Random Forest Classifier","SVM","Decision Tree Classifier","Logistic Regression", "Adaboost Classifier","Extra Trees Classifier","Gradient Boosting Classifier","K-Nearest Neighbors Classifier", "Gaussian Naive Bayes Classifier", "Bernoulli Naive Bayes Classifier", "Multinomial Naive Bayes Classifier", "Passive Aggressive Classifier", "Ridge Classifier", "Lasso Classifier", "ElasticNet Classifier", "Bagging Classifier", "Stochastic Gradient Descent Classifier", "Perceptron", "Isolation Forest", "Principal Component Analysis (PCA)", "Linear Discriminant Analysis (LDA)", "Quadratic Discriminant Analysis (QDA)", "XGBoost Classifier", "LightGBM Classifier", "CatBoost Classifier", "MLP Classifier", "Stacking Classifier"])
+        model_name = st.sidebar.selectbox("Select Machine Learning Model :", ["Random Forest Classifier","SVM","Decision Tree Classifier","Logistic Regression", "Adaboost Classifier","Extra Trees Classifier","Gradient Boosting Classifier","K-Nearest Neighbors Classifier", "Gaussian Naive Bayes Classifier", "Bernoulli Naive Bayes Classifier", "Multinomial Naive Bayes Classifier", "Passive Aggressive Classifier", "Bagging Classifier", "XGBoost Classifier", "LightGBM Classifier", "CatBoost Classifier", "MLP Classifier", "Stacking Classifier"])
 
-        model = switch_case(model_name)
+        params = get_hyperparameters(model_name)
+
+        model = switch_case(model_name, **params)
+
         run_model(df, model, model_name)
 
 main()
