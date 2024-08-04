@@ -185,6 +185,8 @@ def pre_processing(df, columns):
     imputer = SimpleImputer(strategy='mean')
     df = imputer.fit_transform(df)
 
+    st.write("NOTE :The Null values have been filled with mean value and labels are encoded.")
+
     return df
     
 # Run model and evaluation
@@ -216,40 +218,15 @@ def run_model(df, model, model_name):
             # Make predictions
             testing_file = st.sidebar.file_uploader("Upload your testing file...", type=['csv', 'xls', 'xlsx'])
 
-
-            # if testing_file is not None:
-            #     # Check the file extension to determine how to read it
-            #     file_extension = testing_file.name.split('.')[-1]
-
-            #     if file_extension == 'csv':
-            #         test = pd.read_csv(testing_file)
-            #     elif file_extension == 'xls' or file_extension == 'xlsx':
-            #         test = pd.read_excel(testing_file)
-            #     else:
-            #         st.error("Unsupported file type.")
-            #         test = None
-
-            # y_pred = model.predict(X_test)
-
             if testing_file is not None:
-                file_extension = testing_file.name.split('.')[-1]
-                if(file_extension == 'csv'):
-                    test = pd.read_csv(testing_file)
-
-                elif(file_extension == 'xls' or file_extension == 'xlsx'):
-                    test = pd.read_excel(testing_file)
-
-                else:
-                    st.error("Unsupported file type.")
-                    test = None
+                test = pd.read_csv(testing_file)
 
                 test_columns = test.columns
                 test = pre_processing(test, test_columns)
-                test = pd.DataFrame(df, columns=test_columns)
-                y_pred = model.predict(test)
+                test = pd.DataFrame(test, columns=test_columns)
+                y_pred = model.predict(test)  
                 
-            else:    
-                y_pred = model.predict(X_test)
+            y_pred = model.predict(X_test)
             
             eval_mat = st.sidebar.selectbox("Select your Evaluation Matrix :", ["Accuracy", "Precision", "Recall(Sensitivity)", "F1 Score", "Roc AUC Score", "RMSE"])
 
@@ -297,7 +274,7 @@ def run_model(df, model, model_name):
                 pdf_path = generate_pdf(model_name, eval_mat, target_column, testing_size, float(result), confusion_matrix_image_path)
                 with open(pdf_path, "rb") as pdf_file:
                     st.download_button(label="Download PDF Report", data=pdf_file, file_name="model_report.pdf")
-
+# generates roc curve
 def aoc(y_score, n_classes, y_test):   
     y_test_np = y_test.to_numpy() 
     fpr = dict()
@@ -348,15 +325,11 @@ def main():
             </style>
             """, unsafe_allow_html=True)
     
-    st.title("Accurate 🎯")
+    st.title("Accurate 🤖")
     query_params = st.query_params
     user_name = query_params.get("user", ["Guest"])
 
     st.write(f"Welcome, {user_name}!")
-    # Logout Button
-    if st.button("Log Out"):
-        st.write("You are now logged out. Redirecting...")
-        st.markdown('<meta http-equiv="refresh" content="0;url=logout.php" />', unsafe_allow_html=True)
 
 
     upload_file = st.file_uploader("Upload your CSV file...", type=['csv'])
